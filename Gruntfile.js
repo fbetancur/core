@@ -5,7 +5,6 @@
 const fs = require('fs');
 const path = require('path');
 const nodeSass = require('node-sass');
-const transformer = require('enketo-transformer');
 
 module.exports = (grunt) => {
     // show elapsed time at the end
@@ -38,7 +37,6 @@ module.exports = (grunt) => {
         concurrent: {
             develop: {
                 tasks: [
-                    'shell:transformer',
                     'connect:server:keepalive',
                     'watch',
                 ],
@@ -172,9 +170,6 @@ module.exports = (grunt) => {
             },
         },
         shell: {
-            transformer: {
-                command: 'node node_modules/enketo-transformer/app.js',
-            },
             build: {
                 command: 'node ./scripts/build.js',
             },
@@ -196,74 +191,26 @@ module.exports = (grunt) => {
 
     grunt.registerTask(
         'transforms',
-        'Creating forms.js',
-        async function transformsTask() {
-            const forms = {};
+        'Creating forms.js - DISABLED (enketo-transformer removed)',
+        function transformsTask() {
             const done = this.async();
             const formsJsPath = './test/mock/forms.js';
             const formsESMPath = './test/mock/forms.mjs';
-            const xformsPaths = grunt.file.expand({}, 'test/forms/*.xml');
-            grunt.log.write('Transforming XForms ');
-
-            let currentForms;
-
-            const jsModuleExists = fileExists(formsJsPath);
-
-            if (!jsModuleExists) {
-                fs.mkdirSync(path.dirname(formsJsPath), {
-                    recursive: true,
-                });
-                fs.writeFileSync(formsJsPath, 'export default {}');
+            
+            // Create empty forms file since transformer is not available
+            const fs = require('fs');
+            
+            if (!fs.existsSync(path.dirname(formsJsPath))) {
+                fs.mkdirSync(path.dirname(formsJsPath), { recursive: true });
             }
-
-            const esmLinkExists = fileExists(formsESMPath);
-
-            if (!esmLinkExists) {
+            
+            fs.writeFileSync(formsJsPath, 'export default {};');
+            
+            if (!fs.existsSync(formsESMPath)) {
                 fs.linkSync(formsJsPath, formsESMPath);
             }
-
-            try {
-                // This needs to be dynamic in case forms change during watch mode.
-                // eslint-disable-next-line import/no-dynamic-require, global-require
-                currentForms = (await import(formsESMPath)).default;
-            } catch (error) {
-                currentForms = {};
-            }
-
-            for await (const filePath of xformsPaths) {
-                const formsKey = filePath.substring(
-                    filePath.lastIndexOf('/') + 1
-                );
-                const current = currentForms[formsKey];
-                const { mtimeMs } = fs.statSync(filePath);
-                const modifiedTime = Math.floor(mtimeMs);
-
-                if (
-                    current?.modifiedTime != null &&
-                    modifiedTime <= current.modifiedTime
-                ) {
-                    forms[formsKey] = current;
-
-                    continue;
-                }
-
-                const xformStr = grunt.file.read(filePath);
-                grunt.log.write('.');
-
-                const result = await transformer.transform({ xform: xformStr });
-
-                forms[formsKey] = {
-                    modifiedTime,
-                    html_form: result.form,
-                    xml_model: result.model,
-                };
-            }
-
-            fs.writeFileSync(
-                formsJsPath,
-                `export default ${JSON.stringify(forms, null, 2)};`
-            );
-
+            
+            grunt.log.writeln('Forms transformation skipped - enketo-transformer not available');
             done();
         }
     );
