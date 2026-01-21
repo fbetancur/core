@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<h:html xmlns="http://www.w3.org/2002/xforms" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jr="http://openrosa.org/javarosa" xmlns:orx="http://openrosa.org/xforms" xmlns:odk="http://www.opendatakit.org/xforms">
+  <h:head>
+    <h:title>prueba</h:title>
+    <model odk:xforms-version="1.0.0">
+      <instance>
+        <a4s6ZKKP6zfrjSXsZm7SFA id="a4s6ZKKP6zfrjSXsZm7SFA">
+          <start/>
+          <end/>
+          <today/>
+          <Demographic>
+            <municipality/>
+            <o_municipality/>
+            <municipality_L/>
+            <o_municipality_L/>
+            <district/>
+            <name1/>
+          </Demographic>
+          <meta>
+            <audit/>
+            <instanceID/>
+          </meta>
+        </a4s6ZKKP6zfrjSXsZm7SFA>
+      </instance>
+      <instance id="municipality">
+        <root>
+          <item>
+            <name>05001</name>
+            <label>Medellín - Antioquia</label>
+          </item>
+          <item>
+            <name>08001</name>
+            <label>Barranquilla - Atlántico</label>
+          </item>
+          <item>
+            <name>11001</name>
+            <label>Bogotá D.C.</label>
+          </item>
+          <item>
+            <name>13001</name>
+            <label>Cartagena - Bolívar</label>
+          </item>
+          <item>
+            <name>44001</name>
+            <label>Riohacha – La Guajira</label>
+          </item>
+          <item>
+            <name>47001</name>
+            <label>Santa Marta - Magdalena</label>
+          </item>
+          <item>
+            <name>54001</name>
+            <label>Cúcuta – Norte de Santander</label>
+          </item>
+          <item>
+            <name>68001</name>
+            <label>Bucaramanga - Santander</label>
+          </item>
+          <item>
+            <name>76001</name>
+            <label>Cali – Valle del Cauca</label>
+          </item>
+          <item>
+            <name>00000</name>
+            <label>Otro (Especifique manualmente)</label>
+          </item>
+        </root>
+      </instance>
+      <instance id="district">
+        <root>
+          <item>
+            <name>000</name>
+            <label>NA</label>
+          </item>
+          <item>
+            <name>00</name>
+            <label>Terrón Colorado - Comuna 1</label>
+          </item>
+          <item>
+            <name>01</name>
+            <label>Vista Hermosa - Comuna 1</label>
+          </item>
+        </root>
+      </instance>
+      <bind nodeset="/a4s6ZKKP6zfrjSXsZm7SFA/start" jr:preload="timestamp" type="dateTime" jr:preloadParams="start"/>
+      <bind nodeset="/a4s6ZKKP6zfrjSXsZm7SFA/end" jr:preload="timestamp" type="dateTime" jr:preloadParams="end"/>
+      <bind nodeset="/a4s6ZKKP6zfrjSXsZm7SFA/today" jr:preload="date" type="date" jr:preloadParams="today"/>
+      <bind nodeset="/a4s6ZKKP6zfrjSXsZm7SFA/Demographic" required="false()"/>
+      <bind nodeset="/a4s6ZKKP6zfrjSXsZm7SFA/Demographic/municipality" type="string" required="true()"/>
+      <bind nodeset="/a4s6ZKKP6zfrjSXsZm7SFA/Demographic/o_municipality" type="string" relevant=" /a4s6ZKKP6zfrjSXsZm7SFA/Demographic/municipality  = '00000'" required="true()"/>
+      <bind nodeset="/a4s6ZKKP6zfrjSXsZm7SFA/Demographic/municipality_L" type="string" required="false()" calculate="jr:choice-name( /a4s6ZKKP6zfrjSXsZm7SFA/Demographic/municipality ,' /a4s6ZKKP6zfrjSXsZm7SFA/Demographic/municipality ')"/>
+      <bind nodeset="/a4s6ZKKP6zfrjSXsZm7SFA/Demographic/o_municipality_L" type="string" required="false()" calculate="jr:choice-name( /a4s6ZKKP6zfrjSXsZm7SFA/Demographic/o_municipality ,' /a4s6ZKKP6zfrjSXsZm7SFA/Demographic/o_municipality ')"/>
+      <bind nodeset="/a4s6ZKKP6zfrjSXsZm7SFA/Demographic/district" type="string" relevant=" /a4s6ZKKP6zfrjSXsZm7SFA/Demographic/municipality  = '76001'" required="true()"/>
+      <bind nodeset="/a4s6ZKKP6zfrjSXsZm7SFA/Demographic/name1" type="string" required="true()" constraint="regex(.,'^[A-Z a-zÑñáéíóúÁÉÍÓÚ]{3,150}$')" jr:constraintMsg="Por favor ingrese mínimo tres caracteres"/>
+      <bind nodeset="/a4s6ZKKP6zfrjSXsZm7SFA/meta/audit" type="binary"/>
+      <bind nodeset="/a4s6ZKKP6zfrjSXsZm7SFA/meta/instanceID" type="string" readonly="true()" jr:preload="uid"/>
+    </model>
+  </h:head>
+  <h:body>
+    <group appearance="field-list" ref="/a4s6ZKKP6zfrjSXsZm7SFA/Demographic">
+      <label>Información</label>
+      <select1 appearance="minimal" ref="/a4s6ZKKP6zfrjSXsZm7SFA/Demographic/municipality">
+        <label>Por favor seleccione el municipio desde el cual participará en la actividad:</label>
+        <itemset nodeset="instance('municipality')/root/item">
+          <value ref="name"/>
+          <label ref="label"/>
+        </itemset>
+      </select1>
+      <input ref="/a4s6ZKKP6zfrjSXsZm7SFA/Demographic/o_municipality">
+        <label>¿Cuál?</label>
+      </input>
+      <select1 appearance="autocomplete" ref="/a4s6ZKKP6zfrjSXsZm7SFA/Demographic/district">
+        <label>Por favor indique su barrio de residencia:</label>
+        <itemset nodeset="instance('district')/root/item">
+          <value ref="name"/>
+          <label ref="label"/>
+        </itemset>
+      </select1>
+      <input ref="/a4s6ZKKP6zfrjSXsZm7SFA/Demographic/name1">
+        <label>Por favor registre su primer nombre:</label>
+      </input>
+    </group>
+  </h:body>
+</h:html>
