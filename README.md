@@ -1,3 +1,9 @@
+Agregar el formulario
+
+node add-form.js "form.xml" "forms/form.html" "forms/model.xml"
+
+ingresar a http://localhost:8005/?xform=mi-formulario.xml
+
 [![npm version](https://badge.fury.io/js/enketo-core.svg)](http://badge.fury.io/js/enketo-core) ![Build Status](https://github.com/enketo/enketo-core/actions/workflows/npmjs.yml/badge.svg)
 
 # Enketo Core
